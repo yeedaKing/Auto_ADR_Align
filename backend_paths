@@ -1,0 +1,32 @@
+auto-adr-align/
+├─ api/
+│  ├─ main.py
+│  ├─ jobs.py
+│  ├─ schemas.py
+│  └─ __init__.py
+├─ bin/
+│  └─ adr_align.py
+├─ core/
+│  ├─ asr.py
+│  ├─ segment.py
+│  ├─ features.py
+│  ├─ dtw_map.py
+│  ├─ render.py
+│  ├─ export.py
+│  ├─ qc.py
+│  ├─ io_utils.py
+│  ├─ config.py
+│  └─ __init__.py
+├─ models/
+│  └─ README.md
+├─ tests/
+│  ├─ test_dtw_map.py
+│  ├─ test_render.py
+│  ├─ test_exports.py
+│  └─ data/        # tiny wavs + expected csvs for goldens
+├─ runs/           # outputs (gitignored)
+├─ docs/           # figures for the slide deck, pipeline diagram
+├─ requirements.txt  or  pyproject.toml
+├─ .env.example
+├─ .gitignore
+└─ README.md
