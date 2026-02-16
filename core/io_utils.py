@@ -267,6 +267,8 @@ def _smoke_test(in_path: str, out_dir: str) -> None:
     print(f"[io_utils] Wrote: {flac_out} (sha256: {file_sha256(flac_out)[:16]}...)")
 
 
+# python3 core/io_utils.py --in "/Users/dkyee/Desktop/Files/day6/stems/1_SpotiDownloader.com - Chocolate - DAY6_(Instrumental).wav" --out playground
+# python3 core/io_utils.py --in "tests/data/LibriSpeech/84/121550/84-121550-0024.flac" --out playground
 if __name__ == "__main__":
     import argparse
 
