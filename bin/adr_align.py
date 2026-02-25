@@ -33,6 +33,7 @@ from core.io_utils import ensure_mono_48k
 from core.features import extract_mfcc, FeatureConfig
 from core.dtw_map import align_feature_batches, DTWConfig
 from core.export import write_anchors_csv, write_dtw_path_csv, write_stats_csv
+from core.render import render_conformed_wav, RenderConfig
 
 
 def _safe_mkdir(p: Path) -> None:
@@ -130,6 +131,9 @@ def run_align(
     segment_guide: bool = False,
     seg_min_silence: float = 0.35,
     seg_rel_db: float = 20.0,
+    render: bool = False,
+    render_out: str | None = None,
+    fade_ms: float = 20.0,
 ) -> None:
     _safe_mkdir(out_dir)
 
@@ -162,6 +166,17 @@ def run_align(
         _, inv_map = _interp_inverse_from_anchors(res.anchors)
         _write_mapped_segments_csv(out_dir / "guide_segments_mapped_to_adr.csv", gsegs, inv_map)
 
+    if render:
+        out_wav = Path(render_out) if render_out else (out_dir / "adr_conformed.wav")
+        rcfg = RenderConfig(fade_ms=fade_ms)
+        render_conformed_wav(
+            guide_path=guide_path,
+            adr_path=adr_path,
+            anchors_csv=str(anchors_csv),
+            out_wav=str(out_wav),
+            cfg=rcfg,
+        )
+
     # Console summary
     print("[adr_align] guide:", guide_path)
     print("[adr_align] adr  :", adr_path)
@@ -172,8 +187,18 @@ def run_align(
     if segment_guide:
         print("[adr_align] wrote: guide_segments.csv, guide_segments_mapped_to_adr.csv")
 
-# python3 -m bin.adr_align --guide playground/mono48k.wav --adr playground/mono48kadr.wav --out outputs/test1
-# python3 -m bin.adr_align --guide playground/mono48k.wav --adr playground/mono48kadr.wav --out outputs/test1 --segment_guide
+    if render:
+        print(f"[adr_align] wrote: {out_wav}")
+
+
+"""
+python3 -m bin.adr_align \
+  --guide playground/mono48k.wav \
+  --adr playground/mono48kadr.wav \
+  --out outputs/test_render \
+  --segment_guide \
+  --render
+"""
 def main() -> None:
     p = argparse.ArgumentParser(description="Auto-ADR Align (DTW-based time-map exporter)")
     p.add_argument("--guide", required=True, help="Guide wav/flac (production)")
@@ -199,6 +224,12 @@ def main() -> None:
     p.add_argument("--segment_guide", action="store_true", help="Also export guide phrase segments + mapped ADR ranges")
     p.add_argument("--seg_min_silence", type=float, default=0.35, help="Guide segmentation: min silence to split (sec)")
     p.add_argument("--seg_rel_db", type=float, default=20.0, help="Guide segmentation: threshold above noise floor (dB)")
+
+    # Optional rendering
+    p.add_argument("--render", action="store_true", help="Render adr_conformed.wav using anchors.csv")
+    p.add_argument("--render_out", default=None, help="Output WAV path (default: <out>/adr_conformed.wav)")
+    p.add_argument("--fade_ms", type=float, default=20.0, help="Render: boundary fade length in ms")
+
 
     args = p.parse_args()
 
@@ -228,6 +259,9 @@ def main() -> None:
         segment_guide=args.segment_guide,
         seg_min_silence=args.seg_min_silence,
         seg_rel_db=args.seg_rel_db,
+        render=args.render,
+        render_out=args.render_out,
+        fade_ms=args.fade_ms,
     )
 
 
