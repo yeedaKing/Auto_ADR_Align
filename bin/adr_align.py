@@ -173,6 +173,7 @@ def run_align(
         print("[adr_align] wrote: guide_segments.csv, guide_segments_mapped_to_adr.csv")
 
 # python3 -m bin.adr_align --guide playground/mono48k.wav --adr playground/mono48kadr.wav --out outputs/test1
+# python3 -m bin.adr_align --guide playground/mono48k.wav --adr playground/mono48kadr.wav --out outputs/test1 --segment_guide
 def main() -> None:
     p = argparse.ArgumentParser(description="Auto-ADR Align (DTW-based time-map exporter)")
     p.add_argument("--guide", required=True, help="Guide wav/flac (production)")
