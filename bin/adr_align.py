@@ -197,7 +197,8 @@ python3 -m bin.adr_align \
   --adr playground/mono48kadr.wav \
   --out outputs/test_render \
   --segment_guide \
-  --render
+  --render \
+  --fade_ms 40
 """
 def main() -> None:
     p = argparse.ArgumentParser(description="Auto-ADR Align (DTW-based time-map exporter)")
