@@ -34,6 +34,7 @@ from core.features import extract_mfcc, FeatureConfig
 from core.dtw_map import align_feature_batches, DTWConfig
 from core.export import write_anchors_csv, write_dtw_path_csv, write_stats_csv
 from core.render import render_conformed_wav, RenderConfig
+from core.qc import compute_qc_segments, write_qc_segments_csv, QCConfig
 
 
 def _safe_mkdir(p: Path) -> None:
@@ -134,6 +135,9 @@ def run_align(
     render: bool = False,
     render_out: str | None = None,
     fade_ms: float = 20.0,
+    qc: bool = False,
+    qc_cost_percentile: float = 95.0,
+    qc_out: str | None = None,
 ) -> None:
     _safe_mkdir(out_dir)
 
@@ -177,6 +181,19 @@ def run_align(
             cfg=rcfg,
         )
 
+    if qc:
+        qc_cfg = QCConfig(cost_percentile=qc_cost_percentile)
+        qc_segs = compute_qc_segments(
+            adr_fb=fb_a,
+            guide_fb=fb_g,
+            path=res.path,
+            anchors=res.anchors,
+            slope_max=dtw_cfg.slope_max,
+            cfg=qc_cfg,
+        )
+        qc_path = Path(qc_out) if qc_out else (out_dir / "qc_segments.csv")
+        write_qc_segments_csv(qc_segs, str(qc_path))
+
     # Console summary
     print("[adr_align] guide:", guide_path)
     print("[adr_align] adr  :", adr_path)
@@ -190,6 +207,9 @@ def run_align(
     if render:
         print(f"[adr_align] wrote: {out_wav}")
 
+    if qc:
+        print(f"[adr_align] wrote: {qc_path} (n={len(qc_segs)})")
+
 
 """
 python3 -m bin.adr_align \
@@ -198,7 +218,8 @@ python3 -m bin.adr_align \
   --out outputs/test_render \
   --segment_guide \
   --render \
-  --fade_ms 40
+  --fade_ms 40 \
+  --qc
 """
 def main() -> None:
     p = argparse.ArgumentParser(description="Auto-ADR Align (DTW-based time-map exporter)")
@@ -231,6 +252,10 @@ def main() -> None:
     p.add_argument("--render_out", default=None, help="Output WAV path (default: <out>/adr_conformed.wav)")
     p.add_argument("--fade_ms", type=float, default=20.0, help="Render: boundary fade length in ms")
 
+    # Quality control params
+    p.add_argument("--qc", action="store_true", help="Write qc_segments.csv (model-free QC)")
+    p.add_argument("--qc_cost_percentile", type=float, default=95.0, help="QC: percentile for HIGH_COST flagging")
+    p.add_argument("--qc_out", default=None, help="QC output csv path (default: <out>/qc_segments.csv)")
 
     args = p.parse_args()
 
@@ -263,6 +288,9 @@ def main() -> None:
         render=args.render,
         render_out=args.render_out,
         fade_ms=args.fade_ms,
+        qc=args.qc,
+        qc_cost_percentile=args.qc_cost_percentile,
+        qc_out=args.qc_out,
     )
 
 
