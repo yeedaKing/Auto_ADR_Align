@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Auto-ADR Align</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div>
+          <h1>Auto-ADR Align</h1>
+          <p class="sub">
+            Upload a <b>Guide</b> and <b>ADR</b>.  The backend aligns and optionally renders a conformed ADR file.
+          </p>
+        </div>
+        <div class="badge">UI</div>
+      </header>
+
+      <section class="card">
+        <h2>New Job</h2>
+
+        <form id="alignForm" class="form">
+          <div class="grid2">
+            <label class="field">
+              <span class="label">Guide (WAV/FLAC)</span>
+              <input id="guideFile" type="file" accept=".wav,.flac,.aif,.aiff" required />
+            </label>
+
+            <label class="field">
+              <span class="label">ADR (WAV/FLAC)</span>
+              <input id="adrFile" type="file" accept=".wav,.flac,.aif,.aiff" required />
+            </label>
+          </div>
+
+          <div class="grid3">
+            <label class="field inline">
+              <input id="renderToggle" type="checkbox" checked />
+              <span>Render conformed ADR</span>
+            </label>
+
+            <label class="field inline">
+              <input id="qcToggle" type="checkbox" checked />
+              <span>Generate QC</span>
+            </label>
+
+            <label class="field">
+              <span class="label">Fade (ms)</span>
+              <input id="fadeMs" type="number" min="0" step="1" value="20" />
+            </label>
+          </div>
+
+          <details class="details">
+            <summary>Advanced</summary>
+
+            <div class="grid3">
+              <label class="field">
+                <span class="label">Band</span>
+                <input id="band" type="number" step="0.01" min="0.01" max="0.50" value="0.15" />
+              </label>
+
+              <label class="field">
+                <span class="label">Step penalty</span>
+                <input id="stepPenalty" type="number" step="0.0001" min="0" value="0.001" />
+              </label>
+
+              <label class="field">
+                <span class="label">Anchor every (frames)</span>
+                <input id="anchorEvery" type="number" step="1" min="1" value="5" />
+              </label>
+            </div>
+
+            <div class="grid3">
+              <label class="field">
+                <span class="label">Simplify eps (sec)</span>
+                <input id="simplifyEps" type="number" step="0.001" min="0" value="0.020" />
+              </label>
+
+              <label class="field">
+                <span class="label">Slope min</span>
+                <input id="slopeMin" type="number" step="0.01" min="0" value="0.00" />
+              </label>
+
+              <label class="field">
+                <span class="label">Slope max</span>
+                <input id="slopeMax" type="number" step="0.1" min="0.5" value="3.0" />
+              </label>
+            </div>
+
+            <div class="grid3">
+              <label class="field">
+                <span class="label">Render cost max</span>
+                <input id="renderCostMax" type="number" step="0.01" min="0" value="0.25" />
+              </label>
+
+              <label class="field inline">
+                <input id="qcOnRenderSkip" type="checkbox" checked />
+                <span>Force QC if render skipped</span>
+              </label>
+
+              <label class="field inline">
+                <input id="writeSummary" type="checkbox" checked />
+                <span>Write run_summary.json</span>
+              </label>
+            </div>
+
+            <div class="grid3">
+              <label class="field">
+                <span class="label">QC cost percentile</span>
+                <input id="qcCostPercentile" type="number" step="1" min="50" max="100" value="95" />
+              </label>
+
+              <label class="field inline">
+                <input id="segmentGuide" type="checkbox" />
+                <span>Segment guide (export segments CSVs)</span>
+              </label>
+
+              <label class="field">
+                <span class="label">Segment min silence (sec)</span>
+                <input id="segMinSilence" type="number" step="0.01" min="0" value="0.35" />
+              </label>
+            </div>
+
+            <div class="grid3">
+              <label class="field">
+                <span class="label">Segment rel dB</span>
+                <input id="segRelDb" type="number" step="1" min="0" value="20" />
+              </label>
+
+              <label class="field inline">
+                <input id="writePath" type="checkbox" checked />
+                <span>Write path.csv (large)</span>
+              </label>
+
+              <div class="field"></div>
+            </div>
+          </details>
+
+          <div class="actions">
+            <button id="submitBtn" type="submit">Submit Job</button>
+            <button id="resetBtn" type="button" class="secondary">Reset</button>
+          </div>
+
+          <p id="formError" class="error hidden"></p>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Status</h2>
+        <div class="statusRow">
+          <div>
+            <div class="kv"><span class="k">Job ID</span><span id="jobId" class="v">—</span></div>
+            <div class="kv"><span class="k">State</span><span id="jobStatus" class="v">—</span></div>
+            <div class="kv"><span class="k">Updated</span><span id="jobUpdated" class="v">—</span></div>
+          </div>
+          <div class="statusActions">
+            <button id="stopPollBtn" class="secondary" disabled>Stop polling</button>
+            <button id="clearBtn" class="secondary">Clear</button>
+          </div>
+        </div>
+
+        <p id="jobError" class="error hidden"></p>
+
+        <div class="divider"></div>
+
+        <h3>Artifacts</h3>
+        <div id="artifacts" class="artifacts empty">No artifacts yet.</div>
+
+        <div class="divider"></div>
+
+        <h3>Audio preview</h3>
+        <div id="audioPreview" class="audioPreview empty">No audio available yet.</div>
+
+        <div class="divider"></div>
+
+        <h3>run_summary.json</h3>
+        <pre id="summary" class="pre empty">No summary yet.</pre>
+      </section>
+
+      <footer class="footer">
+        <span>David Yee - Capstone project for MUSC 4580.</span>
+      </footer>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
