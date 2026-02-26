@@ -19,14 +19,16 @@ auto-adr-align/
 │  └─ __init__.py
 ├─ models/
 │  └─ README.md
-├─ tests/
-│  ├─ test_dtw_map.py
-│  ├─ test_render.py
-│  ├─ test_exports.py
-│  └─ data/        # tiny wavs + expected csvs for goldens
-├─ runs/           # outputs (gitignored)
+├─ data/           # input audio files
+├─ runs_api/       # outputs from api runs
 ├─ docs/           # figures for the slide deck, pipeline diagram
-├─ requirements.txt  or  pyproject.toml
+├─ playground/     # initial testing
+├─ requirements.txt
 ├─ .env.example
 ├─ .gitignore
-└─ README.md
+├─ README.md
+├─ web/
+│  ├─ app.js
+│  ├─ index.html
+│  ├─ README.md
+│  └─ styles.css
