@@ -19,6 +19,7 @@ from api.schemas import AlignCreateResponse, JobInfo, JobList, ArtifactInfo
 from bin.adr_align import run_align
 from core.features import FeatureConfig
 from core.dtw_map import DTWConfig
+from bin.adr_align import run_align, GuardrailConfig
 
 
 def _iso(dt) -> str:
@@ -70,7 +71,7 @@ def root():
         "endpoints": ["/health", "/docs", "/align", "/jobs"]
     }
 
-    
+
 @app.get("/health")
 def health():
     return {"ok": True}
@@ -108,6 +109,12 @@ async def align(
     segment_guide: bool = Form(False),
     seg_min_silence: float = Form(0.35),
     seg_rel_db: float = Form(20.0),
+
+    # Guardrails
+    render_cost_max: float = Form(0.25),
+    qc_on_render_skip: bool = Form(True),
+    write_summary: bool = Form(True),
+    plateau_warn_s: float = Form(2.0),
 ):
     job = store.create_job()
 
@@ -136,6 +143,12 @@ async def align(
         slope_min=slope_min,
         slope_max=slope_max,
     )
+    guardrails = GuardrailConfig(
+        render_cost_max=render_cost_max,
+        qc_on_render_skip=qc_on_render_skip,
+        write_summary=write_summary,
+        plateau_warn_s=plateau_warn_s,
+    )
 
     def _do_work():
         # Put artifacts directly in job.out_dir (not inside inputs/)
@@ -155,6 +168,7 @@ async def align(
             qc=qc,
             qc_cost_percentile=qc_cost_percentile,
             qc_out=str(job.out_dir / "qc_segments.csv") if qc else None,
+            guardrails=guardrails,
         )
 
     store.run_in_thread(job.job_id, _do_work)
