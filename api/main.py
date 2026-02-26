@@ -16,10 +16,11 @@ from api.schemas import AlignCreateResponse, JobInfo, JobList, ArtifactInfo
 
 # Import pipeline runner
 # Requires bin/ to be a package (bin/__init__.py)
-from bin.adr_align import run_align
 from core.features import FeatureConfig
 from core.dtw_map import DTWConfig
 from bin.adr_align import run_align, GuardrailConfig
+
+from fastapi.staticfiles import StaticFiles
 
 
 def _iso(dt) -> str:
@@ -53,6 +54,8 @@ RUNS_DIR = Path(os.environ.get("RUNS_DIR", "runs_api")).resolve()
 store = JobStore(RUNS_DIR)
 
 app = FastAPI(title="Auto-ADR Align API", version="0.1")
+app.mount("/ui", StaticFiles(directory="web", html=True), name="web")
+
 
 # For eventual React UI
 app.add_middleware(
@@ -62,14 +65,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.get("/")
-def root():
-    return {
-        "name": "Auto-ADR Align API",
-        "endpoints": ["/health", "/docs", "/align", "/jobs"]
-    }
 
 
 @app.get("/health")
