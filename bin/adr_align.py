@@ -27,6 +27,10 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import List, Tuple
 
+import json
+from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
+
 import numpy as np
 
 from core.io_utils import ensure_mono_48k
@@ -122,6 +126,72 @@ def _write_mapped_segments_csv(
             w.writerow([i, f"{gs:.6f}", f"{ge:.6f}", f"{adr_s:.6f}", f"{adr_e:.6f}"])
 
 
+@dataclass(frozen=True)
+class GuardrailConfig:
+    # If mean_cost is above this, skip render (still export + QC + summary).
+    render_cost_max: float = 0.25
+
+    # Plateau warnings (ADR advances while guide is flat) — not necessarily “bad”, but useful for QC/summary.
+    plateau_warn_s: float = 2.0
+
+    # When render is skipped, still generate qc_segments.csv even if --qc was not requested.
+    qc_on_render_skip: bool = True
+
+    # Always write run_summary.json
+    write_summary: bool = True
+
+
+def _utc_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _max_plateau_adr_seconds(anchors: np.ndarray, slope_eps: float = 0.03) -> float:
+    """
+    Returns max ADR duration (seconds) where local slope dy/dx <= slope_eps.
+    This catches “guide-time flat while ADR-time moves” and near-flat regions.
+    """
+    a = np.asarray(anchors, dtype=np.float64)
+    if a.ndim != 2 or a.shape[0] < 2:
+        return 0.0
+    tA0, tA1 = a[:-1, 0], a[1:, 0]
+    tG0, tG1 = a[:-1, 1], a[1:, 1]
+    dx = tA1 - tA0
+    dy = tG1 - tG0
+
+    cur = 0.0
+    best = 0.0
+    for k in range(dx.size):
+        if dx[k] <= 1e-12:
+            continue
+        slope = dy[k] / dx[k]
+        if slope <= slope_eps:
+            cur += float(dx[k])
+            best = max(best, cur)
+        else:
+            cur = 0.0
+    return float(best)
+
+
+def _list_artifacts(out_dir: Path):
+    arts = []
+    for p in sorted(out_dir.iterdir()):
+        if p.is_file():
+            try:
+                size = p.stat().st_size
+            except OSError:
+                size = None
+            arts.append({"name": p.name, "size_bytes": size})
+    return arts
+
+
+def _write_json(path: Path, obj: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    with tmp.open("w") as f:
+        json.dump(obj, f, indent=2)
+    tmp.replace(path)
+
+
 def run_align(
     guide_path: str,
     adr_path: str,
@@ -138,6 +208,7 @@ def run_align(
     qc: bool = False,
     qc_cost_percentile: float = 95.0,
     qc_out: str | None = None,
+    guardrails: GuardrailConfig = GuardrailConfig(),
 ) -> None:
     _safe_mkdir(out_dir)
 
@@ -149,6 +220,18 @@ def run_align(
 
     res = align_feature_batches(fb_a, fb_g, dtw_cfg)
 
+    mean_cost = float(res.stats.get("mean_cost", 1e9))
+    max_plateau_adr_s = _max_plateau_adr_seconds(res.anchors, slope_eps=0.03)
+
+    render_requested = bool(render)
+    render_executed = False
+    render_skipped_reason = None
+
+    # Guardrail: skip render if alignment seems unreliable
+    if render_requested and mean_cost > guardrails.render_cost_max:
+        render = False
+        render_skipped_reason = f"mean_cost {mean_cost:.6f} > render_cost_max {guardrails.render_cost_max:.6f}"
+
     anchors_csv = out_dir / "anchors.csv"
     stats_csv = out_dir / "stats.csv"
     path_csv = out_dir / "path.csv"
@@ -158,7 +241,6 @@ def run_align(
 
     if write_path:
         write_dtw_path_csv(res.path, fb_a.hop_s, fb_g.hop_s, str(path_csv))
-
 
     # Optional phrase segmentation on guide + mapping to ADR time via inverse map
     if segment_guide:
@@ -180,8 +262,19 @@ def run_align(
             out_wav=str(out_wav),
             cfg=rcfg,
         )
+        render_executed = True
 
-    if qc:
+    # Decide if we should force QC even if user didn't ask
+    qc_forced = False
+    if render_requested and (not render) and guardrails.qc_on_render_skip:
+        qc_forced = True
+
+
+    qc_enabled = qc or qc_forced
+    qc_segments_count = 0
+    qc_csv_path = None
+
+    if qc_enabled:
         qc_cfg = QCConfig(cost_percentile=qc_cost_percentile)
         qc_segs = compute_qc_segments(
             adr_fb=fb_a,
@@ -191,8 +284,9 @@ def run_align(
             slope_max=dtw_cfg.slope_max,
             cfg=qc_cfg,
         )
-        qc_path = Path(qc_out) if qc_out else (out_dir / "qc_segments.csv")
-        write_qc_segments_csv(qc_segs, str(qc_path))
+        qc_segments_count = len(qc_segs)
+        qc_csv_path = Path(qc_out) if qc_out else (out_dir / "qc_segments.csv")
+        write_qc_segments_csv(qc_segs, str(qc_csv_path))
 
     # Console summary
     print("[adr_align] guide:", guide_path)
@@ -207,8 +301,51 @@ def run_align(
     if render:
         print(f"[adr_align] wrote: {out_wav}")
 
-    if qc:
-        print(f"[adr_align] wrote: {qc_path} (n={len(qc_segs)})")
+    if qc_enabled:
+        print(f"[adr_align] wrote: {qc_csv_path} (n={qc_segments_count})")
+
+    if guardrails.write_summary:
+        summary_path = out_dir / "run_summary.json"
+        summary = {
+            "created_at_utc": _utc_iso(),
+            "inputs": {
+                "guide_path": str(guide_path),
+                "adr_path": str(adr_path),
+                "out_dir": str(out_dir),
+            },
+            "durations_sec": {
+                "guide": float(guide.duration),
+                "adr": float(adr.duration),
+            },
+            "configs": {
+                "features": asdict(feat_cfg),
+                "dtw": asdict(dtw_cfg),
+                "guardrails": asdict(guardrails),
+                "render": {"fade_ms": float(fade_ms)},
+                "qc": {"cost_percentile": float(qc_cost_percentile)},
+            },
+            "stats": {k: float(v) for k, v in res.stats.items()},
+            "guardrail_metrics": {
+                "mean_cost": mean_cost,
+                "max_plateau_adr_s": float(max_plateau_adr_s),
+                "plateau_warn_s": float(guardrails.plateau_warn_s),
+                "plateau_warn_triggered": bool(max_plateau_adr_s >= guardrails.plateau_warn_s),
+            },
+            "actions": {
+                "render_requested": render_requested,
+                "render_executed": bool(render_executed),
+                "render_skipped_reason": render_skipped_reason,
+                "qc_requested": bool(qc),
+                "qc_forced": bool(qc_forced),
+                "qc_executed": bool(qc_enabled),
+                "qc_segments_count": int(qc_segments_count),
+                "qc_csv": str(qc_csv_path) if qc_csv_path else None,
+            },
+            "artifacts": _list_artifacts(out_dir),
+        }
+        _write_json(summary_path, summary)
+        print(f"[adr_align] wrote: {summary_path}")
+
 
 
 """
@@ -219,7 +356,8 @@ python3 -m bin.adr_align \
   --segment_guide \
   --render \
   --fade_ms 40 \
-  --qc
+  --qc \
+  --qc_on_render_skip
 """
 def main() -> None:
     p = argparse.ArgumentParser(description="Auto-ADR Align (DTW-based time-map exporter)")
@@ -257,6 +395,12 @@ def main() -> None:
     p.add_argument("--qc_cost_percentile", type=float, default=95.0, help="QC: percentile for HIGH_COST flagging")
     p.add_argument("--qc_out", default=None, help="QC output csv path (default: <out>/qc_segments.csv)")
 
+    # Guardrail params
+    p.add_argument("--render_cost_max", type=float, default=0.25, help="Guardrail: skip render if mean_cost exceeds this")
+    p.add_argument("--qc_on_render_skip", action="store_true", help="Force QC if render is skipped (default: off unless you want)")
+    p.add_argument("--no_summary", action="store_true", help="Do not write run_summary.json")
+
+
     args = p.parse_args()
 
     out_dir = Path(args.out) if args.out else Path("outputs") / f"{_basename_noext(args.guide)}__{_basename_noext(args.adr)}"
@@ -275,6 +419,12 @@ def main() -> None:
         slope_max=args.slope_max,
     )
 
+    guardrails = GuardrailConfig(
+        render_cost_max=args.render_cost_max,
+        qc_on_render_skip=args.qc_on_render_skip,
+        write_summary=(not args.no_summary),
+    )
+
     run_align(
         guide_path=args.guide,
         adr_path=args.adr,
@@ -291,6 +441,7 @@ def main() -> None:
         qc=args.qc,
         qc_cost_percentile=args.qc_cost_percentile,
         qc_out=args.qc_out,
+        guardrails=guardrails,
     )
 
 
