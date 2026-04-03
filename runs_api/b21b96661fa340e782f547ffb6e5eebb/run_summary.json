@@ -1,9 +1,9 @@
 {
-  "created_at_utc": "2026-02-26T07:50:02.297569+00:00",
+  "created_at_utc": "2026-04-03T21:29:28.295808+00:00",
   "inputs": {
-    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/223aca38a2ab48c4a23b1a682b05131d/inputs/guide.wav",
-    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/223aca38a2ab48c4a23b1a682b05131d/inputs/adr.wav",
-    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/223aca38a2ab48c4a23b1a682b05131d"
+    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/inputs/guide.wav",
+    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/inputs/adr.wav",
+    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb"
   },
   "durations_sec": {
     "guide": 8.63,
@@ -27,21 +27,21 @@
     },
     "dtw": {
       "band_frac": 0.15,
-      "step_penalty": 0.001,
+      "step_penalty": 0.005,
       "slope_min": 0.0,
-      "slope_max": 3.0,
-      "anchor_every": 5,
-      "simplify_eps_s": 0.02,
+      "slope_max": 1.8,
+      "anchor_every": 15,
+      "simplify_eps_s": 0.06,
       "eps": 1e-08
     },
     "guardrails": {
-      "render_cost_max": 0.01,
+      "render_cost_max": 0.12,
       "plateau_warn_s": 2.0,
       "qc_on_render_skip": true,
       "write_summary": true
     },
     "render": {
-      "fade_ms": 20.0
+      "fade_ms": 50.0
     },
     "qc": {
       "cost_percentile": 95.0
@@ -53,35 +53,39 @@
     "path_len": 1147.0,
     "mean_cost": 0.08321421593427658,
     "min_slope": 0.0,
-    "max_slope": 3.0000000000000044,
-    "num_clamps": 3.0,
-    "anchors_k": 24.0,
+    "max_slope": 1.8000000000000003,
+    "num_clamps": 2.0,
+    "anchors_k": 13.0,
     "band_frac": 0.15
   },
   "guardrail_metrics": {
     "mean_cost": 0.08321421593427658,
-    "max_plateau_adr_s": 1.2699999999999996,
+    "max_plateau_adr_s": 1.17,
     "plateau_warn_s": 2.0,
     "plateau_warn_triggered": false
   },
   "actions": {
     "render_requested": true,
-    "render_executed": false,
-    "render_skipped_reason": "mean_cost 0.083214 > render_cost_max 0.010000",
-    "qc_requested": false,
-    "qc_forced": true,
+    "render_executed": true,
+    "render_skipped_reason": null,
+    "qc_requested": true,
+    "qc_forced": false,
     "qc_executed": true,
     "qc_segments_count": 2,
-    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/223aca38a2ab48c4a23b1a682b05131d/qc_segments.csv"
+    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/qc_segments.csv"
   },
   "artifacts": [
     {
+      "name": "adr_conformed.wav",
+      "size_bytes": 828524
+    },
+    {
       "name": "anchors.csv",
-      "size_bytes": 480
+      "size_bytes": 271
     },
     {
       "name": "path.csv",
-      "size_bytes": 30888
+      "size_bytes": 30885
     },
     {
       "name": "qc_segments.csv",
