@@ -9,6 +9,8 @@ const el = (id) => document.getElementById(id);
 const form = el("alignForm");
 const guideFile = el("guideFile");
 const adrFile = el("adrFile");
+const guideFileStatus = el("guideFileStatus");
+const adrFileStatus = el("adrFileStatus");
 const renderToggle = el("renderToggle");
 const qcToggle = el("qcToggle");
 const fadeMs = el("fadeMs");
@@ -48,6 +50,20 @@ const summaryEl = el("summary");
 
 let pollTimer = null;
 let currentJobId = null;
+
+function updateFileStatus(inputEl, statusEl, label) {
+  const file = inputEl.files?.[0];
+  if (!file) {
+    statusEl.textContent = "No file selected";
+    statusEl.classList.add("empty");
+    statusEl.classList.remove("ok");
+    return;
+  }
+
+  statusEl.textContent = `${label}: ${file.name} (${bytesToHuman(file.size)})`;
+  statusEl.classList.remove("empty");
+  statusEl.classList.add("ok");
+}
 
 function showError(targetEl, msg) {
   targetEl.textContent = msg;
@@ -93,9 +109,25 @@ function startPolling(jobId) {
 
 stopPollBtn.addEventListener("click", () => stopPolling());
 
+guideFile.addEventListener("change", () => {
+  updateFileStatus(guideFile, guideFileStatus, "Guide loaded");
+});
+
+adrFile.addEventListener("change", () => {
+  updateFileStatus(adrFile, adrFileStatus, "ADR loaded");
+});
+
 resetBtn.addEventListener("click", () => {
   form.reset();
   clearError(formError);
+
+  guideFileStatus.textContent = "No file selected";
+  guideFileStatus.classList.add("empty");
+  guideFileStatus.classList.remove("ok");
+
+  adrFileStatus.textContent = "No file selected";
+  adrFileStatus.classList.add("empty");
+  adrFileStatus.classList.remove("ok");
 });
 
 clearBtn.addEventListener("click", () => {

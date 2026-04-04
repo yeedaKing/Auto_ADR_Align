@@ -12,7 +12,7 @@
         <div>
           <h1>Auto-ADR Align</h1>
           <p class="sub">
-            Upload a <b>Guide</b> and <b>ADR</b>.  The backend aligns and optionally renders a conformed ADR file.
+            Upload a <b>Guide</b> and <b>ADR</b>. The backend aligns and optionally renders a conformed ADR file.
           </p>
         </div>
         <div class="badge">UI</div>
@@ -23,15 +23,35 @@
 
         <form id="alignForm" class="form">
           <div class="grid2">
-            <label class="field">
+            <div class="field">
               <span class="label">Guide (WAV/FLAC)</span>
-              <input id="guideFile" type="file" accept=".wav,.flac,.aif,.aiff" required />
-            </label>
 
-            <label class="field">
+              <label for="guideFile" class="filePicker">Select file</label>
+              <input
+                id="guideFile"
+                class="fileInputHidden"
+                type="file"
+                accept=".wav,.flac,.aif,.aiff"
+                required
+              />
+
+              <span id="guideFileStatus" class="fileStatus empty">No file selected</span>
+            </div>
+
+            <div class="field">
               <span class="label">ADR (WAV/FLAC)</span>
-              <input id="adrFile" type="file" accept=".wav,.flac,.aif,.aiff" required />
-            </label>
+
+              <label for="adrFile" class="filePicker">Select file</label>
+              <input
+                id="adrFile"
+                class="fileInputHidden"
+                type="file"
+                accept=".wav,.flac,.aif,.aiff"
+                required
+              />
+
+              <span id="adrFileStatus" class="fileStatus empty">No file selected</span>
+            </div>
           </div>
 
           <div class="grid3">

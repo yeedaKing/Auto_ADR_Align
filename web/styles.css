@@ -305,3 +305,36 @@
     font-size: 12px;
     text-align: center;
   }
+
+  .fileStatus {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  
+  .fileStatus.empty {
+    color: var(--muted);
+  }
+  
+  .fileStatus.ok {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .fileInputHidden {
+    display: none;
+  }
+  
+  .filePicker {
+    display: inline-block;
+    width: fit-content;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.25);
+    color: var(--text);
+    cursor: pointer;
+  }
+  
+  .filePicker:hover {
+    filter: brightness(1.06);
+  }
