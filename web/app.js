@@ -216,7 +216,7 @@ async function submitJob() {
     summaryEl.classList.add("empty");
 
     startPolling(data.job_id);
-    await pollJob(data.job_id); // immediate poll once
+    await pollJob(data.job_id);
   } catch (e) {
     showError(formError, e.message || String(e));
   } finally {
@@ -256,7 +256,6 @@ async function pollJob(jobId) {
       stopPolling();
     }
   } catch (e) {
-    // transient errors (server reload etc.)
     showError(jobErrorEl, e.message || String(e));
   }
 }

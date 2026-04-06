@@ -57,16 +57,40 @@
           <div class="grid3">
             <label class="field inline">
               <input id="renderToggle" type="checkbox" checked />
-              <span>Render conformed ADR</span>
+              <span class="inlineLabelWithInfo">
+                <span>Render conformed ADR</span>
+                <span class="tooltipWrap" tabindex="0">
+                  <span class="infoTip">i</span>
+                  <span class="tooltipBox">
+                    Renders a conformed ADR WAV using the alignment map. Turn this off if you only want alignment outputs without audio rendering.
+                  </span>
+                </span>
+              </span>
             </label>
 
             <label class="field inline">
               <input id="qcToggle" type="checkbox" checked />
-              <span>Generate QC</span>
+              <span class="inlineLabelWithInfo">
+                <span>Generate QC</span>
+                <span class="tooltipWrap" tabindex="0">
+                  <span class="infoTip">i</span>
+                  <span class="tooltipBox">
+                    Generates quality-control outputs so you can inspect alignment quality and catch suspicious regions.
+                  </span>
+                </span>
+              </span>
             </label>
 
             <label class="field">
-              <span class="label">Fade (ms)</span>
+              <span class="labelWithInfo">
+                <span class="label">Fade (ms)</span>
+                <span class="tooltipWrap" tabindex="0">
+                  <span class="infoTip">i</span>
+                  <span class="tooltipBox">
+                    Fade length applied at rendered segment boundaries. Can help reduce clicks at joins.
+                  </span>
+                </span>
+              </span>
               <input id="fadeMs" type="number" min="0" step="1" value="20" />
             </label>
           </div>
@@ -76,81 +100,193 @@
 
             <div class="grid3">
               <label class="field">
-                <span class="label">Band</span>
+                <span class="labelWithInfo">
+                  <span class="label">Band</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Controls how far the DTW search can wander from the diagonal. Smaller values keep alignment tighter; larger values allow more flexibility.
+                    </span>
+                  </span>
+                </span>
                 <input id="band" type="number" step="0.01" min="0.01" max="0.50" value="0.15" />
               </label>
 
               <label class="field">
-                <span class="label">Step penalty</span>
+                <span class="labelWithInfo">
+                  <span class="label">Step penalty</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Penalty for non-diagonal DTW steps. Higher values discourage jagged paths and can produce smoother alignments.
+                    </span>
+                  </span>
+                </span>
                 <input id="stepPenalty" type="number" step="0.0001" min="0" value="0.001" />
               </label>
 
               <label class="field">
-                <span class="label">Anchor every (frames)</span>
+                <span class="labelWithInfo">
+                  <span class="label">Anchor every (frames)</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      How densely anchors are sampled from the alignment path. Lower values create more anchors; higher values create a simpler map.
+                    </span>
+                  </span>
+                </span>
                 <input id="anchorEvery" type="number" step="1" min="1" value="5" />
               </label>
             </div>
 
             <div class="grid3">
               <label class="field">
-                <span class="label">Simplify eps (sec)</span>
+                <span class="labelWithInfo">
+                  <span class="label">Simplify eps (sec)</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Simplification tolerance for the time map. Higher values smooth out small bends and reduce local warp complexity.
+                    </span>
+                  </span>
+                </span>
                 <input id="simplifyEps" type="number" step="0.001" min="0" value="0.020" />
               </label>
 
               <label class="field">
-                <span class="label">Slope min</span>
+                <span class="labelWithInfo">
+                  <span class="label">Slope min</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Minimum allowed local slope in the time map. Prevents overly aggressive compression in small regions.
+                    </span>
+                  </span>
+                </span>
                 <input id="slopeMin" type="number" step="0.01" min="0" value="0.00" />
               </label>
 
               <label class="field">
-                <span class="label">Slope max</span>
+                <span class="labelWithInfo">
+                  <span class="label">Slope max</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Maximum allowed local slope in the time map. Lower values can reduce extreme local stretching and help avoid artifacts.
+                    </span>
+                  </span>
+                </span>
                 <input id="slopeMax" type="number" step="0.1" min="0.5" value="3.0" />
               </label>
             </div>
 
             <div class="grid3">
               <label class="field">
-                <span class="label">Render cost max</span>
+                <span class="labelWithInfo">
+                  <span class="label">Render cost max</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Maximum acceptable alignment cost for rendering. Regions above this threshold may be skipped to avoid poor renders.
+                    </span>
+                  </span>
+                </span>
                 <input id="renderCostMax" type="number" step="0.01" min="0" value="0.25" />
               </label>
 
               <label class="field inline">
                 <input id="qcOnRenderSkip" type="checkbox" checked />
-                <span>Force QC if render skipped</span>
+                <span class="inlineLabelWithInfo">
+                  <span>Force QC if render skipped</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      If rendering is skipped due to high cost, still generate QC outputs so the problem area can be inspected.
+                    </span>
+                  </span>
+                </span>
               </label>
 
               <label class="field inline">
                 <input id="writeSummary" type="checkbox" checked />
-                <span>Write run_summary.json</span>
+                <span class="inlineLabelWithInfo">
+                  <span>Write run_summary.json</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Writes a JSON summary of the run, including key settings and output information.
+                    </span>
+                  </span>
+                </span>
               </label>
             </div>
 
             <div class="grid3">
               <label class="field">
-                <span class="label">QC cost percentile</span>
+                <span class="labelWithInfo">
+                  <span class="label">QC cost percentile</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Percentile used when summarizing DTW costs for QC. Higher values make QC focus more on the worst matching regions.
+                    </span>
+                  </span>
+                </span>
                 <input id="qcCostPercentile" type="number" step="1" min="50" max="100" value="95" />
               </label>
 
               <label class="field inline">
                 <input id="segmentGuide" type="checkbox" />
-                <span>Segment guide (export segments CSVs)</span>
+                <span class="inlineLabelWithInfo">
+                  <span>Segment guide (export segments CSVs)</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Segments the guide into regions and exports segment CSVs for inspection or debugging.
+                    </span>
+                  </span>
+                </span>
               </label>
 
               <label class="field">
-                <span class="label">Segment min silence (sec)</span>
+                <span class="labelWithInfo">
+                  <span class="label">Segment min silence (sec)</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Minimum silence duration used when segmenting the guide.
+                    </span>
+                  </span>
+                </span>
                 <input id="segMinSilence" type="number" step="0.01" min="0" value="0.35" />
               </label>
             </div>
 
             <div class="grid3">
               <label class="field">
-                <span class="label">Segment rel dB</span>
+                <span class="labelWithInfo">
+                  <span class="label">Segment rel dB</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Relative level threshold used to decide what counts as silence during segmentation.
+                    </span>
+                  </span>
+                </span>
                 <input id="segRelDb" type="number" step="1" min="0" value="20" />
               </label>
 
               <label class="field inline">
                 <input id="writePath" type="checkbox" checked />
-                <span>Write path.csv (large)</span>
+                <span class="inlineLabelWithInfo">
+                  <span>Write path.csv (large)</span>
+                  <span class="tooltipWrap" tabindex="0">
+                    <span class="infoTip">i</span>
+                    <span class="tooltipBox">
+                      Exports the full DTW path to CSV. Useful for debugging, but can be large.
+                    </span>
+                  </span>
+                </span>
               </label>
 
               <div class="field"></div>
