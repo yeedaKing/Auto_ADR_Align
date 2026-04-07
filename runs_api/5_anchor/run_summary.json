@@ -1,9 +1,9 @@
 {
-  "created_at_utc": "2026-04-03T21:29:28.295808+00:00",
+  "created_at_utc": "2026-04-06T23:56:14.752006+00:00",
   "inputs": {
-    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/inputs/guide.wav",
-    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/inputs/adr.wav",
-    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb"
+    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/6e9f4c7d1c40468c937b8302ada8c97b/inputs/guide.wav",
+    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/6e9f4c7d1c40468c937b8302ada8c97b/inputs/adr.wav",
+    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/6e9f4c7d1c40468c937b8302ada8c97b"
   },
   "durations_sec": {
     "guide": 8.63,
@@ -30,7 +30,7 @@
       "step_penalty": 0.005,
       "slope_min": 0.0,
       "slope_max": 1.8,
-      "anchor_every": 15,
+      "anchor_every": 5,
       "simplify_eps_s": 0.06,
       "eps": 1e-08
     },
@@ -53,14 +53,14 @@
     "path_len": 1147.0,
     "mean_cost": 0.08321421593427658,
     "min_slope": 0.0,
-    "max_slope": 1.8000000000000003,
-    "num_clamps": 2.0,
-    "anchors_k": 13.0,
+    "max_slope": 7.700000000000041,
+    "num_clamps": 0.0,
+    "anchors_k": 17.0,
     "band_frac": 0.15
   },
   "guardrail_metrics": {
     "mean_cost": 0.08321421593427658,
-    "max_plateau_adr_s": 1.17,
+    "max_plateau_adr_s": 1.2699999999999996,
     "plateau_warn_s": 2.0,
     "plateau_warn_triggered": false
   },
@@ -72,7 +72,7 @@
     "qc_forced": false,
     "qc_executed": true,
     "qc_segments_count": 2,
-    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/b21b96661fa340e782f547ffb6e5eebb/qc_segments.csv"
+    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/6e9f4c7d1c40468c937b8302ada8c97b/qc_segments.csv"
   },
   "artifacts": [
     {
@@ -81,7 +81,7 @@
     },
     {
       "name": "anchors.csv",
-      "size_bytes": 271
+      "size_bytes": 347
     },
     {
       "name": "path.csv",

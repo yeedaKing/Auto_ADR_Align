@@ -337,7 +337,8 @@ def align_feature_batches(adr: FeatureBatch, guide: FeatureBatch, cfg: DTWConfig
     # anchors from path -> simplify -> clamp slopes
     anchors = _anchors_from_path_by_i(path, adr.hop_s, guide.hop_s, every_i=cfg.anchor_every)
     anchors = _rdp_simplify_xy(anchors, eps_y=cfg.simplify_eps_s)
-    anchors, clamps = _clamp_slopes(anchors, cfg.slope_min, cfg.slope_max)
+    """anchors, clamps = _clamp_slopes(anchors, cfg.slope_min, cfg.slope_max)"""
+    clamps = 0
 
     # stats
     path_cost = float(np.mean([cost[i, j] for (i, j) in path]))

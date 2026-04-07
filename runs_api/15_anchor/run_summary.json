@@ -1,9 +1,9 @@
 {
-  "created_at_utc": "2026-04-06T20:39:59.740987+00:00",
+  "created_at_utc": "2026-04-06T23:54:01.330912+00:00",
   "inputs": {
-    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/39398dd1b9604b2691f4d3bdb89e8224/inputs/guide.wav",
-    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/39398dd1b9604b2691f4d3bdb89e8224/inputs/adr.wav",
-    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/39398dd1b9604b2691f4d3bdb89e8224"
+    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/372c373e2ff24f2eb50e4ee7fb62144c/inputs/guide.wav",
+    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/372c373e2ff24f2eb50e4ee7fb62144c/inputs/adr.wav",
+    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/372c373e2ff24f2eb50e4ee7fb62144c"
   },
   "durations_sec": {
     "guide": 8.63,
@@ -27,21 +27,21 @@
     },
     "dtw": {
       "band_frac": 0.15,
-      "step_penalty": 0.001,
+      "step_penalty": 0.005,
       "slope_min": 0.0,
-      "slope_max": 3.0,
-      "anchor_every": 5,
-      "simplify_eps_s": 0.02,
+      "slope_max": 1.8,
+      "anchor_every": 15,
+      "simplify_eps_s": 0.06,
       "eps": 1e-08
     },
     "guardrails": {
-      "render_cost_max": 0.25,
+      "render_cost_max": 0.12,
       "plateau_warn_s": 2.0,
       "qc_on_render_skip": true,
       "write_summary": true
     },
     "render": {
-      "fade_ms": 20.0
+      "fade_ms": 50.0
     },
     "qc": {
       "cost_percentile": 95.0
@@ -53,14 +53,14 @@
     "path_len": 1147.0,
     "mean_cost": 0.08321421593427658,
     "min_slope": 0.0,
-    "max_slope": 3.0000000000000044,
-    "num_clamps": 3.0,
-    "anchors_k": 24.0,
+    "max_slope": 3.2333333333333276,
+    "num_clamps": 0.0,
+    "anchors_k": 13.0,
     "band_frac": 0.15
   },
   "guardrail_metrics": {
     "mean_cost": 0.08321421593427658,
-    "max_plateau_adr_s": 1.2699999999999996,
+    "max_plateau_adr_s": 1.17,
     "plateau_warn_s": 2.0,
     "plateau_warn_triggered": false
   },
@@ -72,7 +72,7 @@
     "qc_forced": false,
     "qc_executed": true,
     "qc_segments_count": 2,
-    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/39398dd1b9604b2691f4d3bdb89e8224/qc_segments.csv"
+    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/372c373e2ff24f2eb50e4ee7fb62144c/qc_segments.csv"
   },
   "artifacts": [
     {
@@ -81,11 +81,11 @@
     },
     {
       "name": "anchors.csv",
-      "size_bytes": 480
+      "size_bytes": 271
     },
     {
       "name": "path.csv",
-      "size_bytes": 30888
+      "size_bytes": 30885
     },
     {
       "name": "qc_segments.csv",

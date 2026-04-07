@@ -1,10 +1,10 @@
 key,value
 Ta,1078.000000
 Tg,862.000000
-anchors_k,13.000000
+anchors_k,16.000000
 band_frac,0.150000
-max_slope,1.800000
+max_slope,12.166667
 mean_cost,0.083214
 min_slope,0.000000
-num_clamps,2.000000
+num_clamps,0.000000
 path_len,1147.000000
