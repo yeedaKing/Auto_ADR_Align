@@ -7,7 +7,6 @@ auto-adr-align/
 ├─ bin/
 │  └─ adr_align.py
 ├─ core/
-│  ├─ asr.py
 │  ├─ segment.py
 │  ├─ features.py
 │  ├─ dtw_map.py
@@ -15,17 +14,12 @@ auto-adr-align/
 │  ├─ export.py
 │  ├─ qc.py
 │  ├─ io_utils.py
-│  ├─ config.py
 │  └─ __init__.py
-├─ models/
-│  └─ README.md
 ├─ data/           # input audio files
 ├─ runs_api/       # outputs from api runs
-├─ docs/           # figures for the slide deck, pipeline diagram
 ├─ playground/     # initial testing
 ├─ requirements.txt
-├─ .env.example
-├─ .gitignore
+├─ .gitattributes
 ├─ README.md
 ├─ web/
 │  ├─ app.js
