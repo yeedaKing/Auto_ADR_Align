@@ -1,0 +1,99 @@
+{
+  "created_at_utc": "2026-04-08T04:40:38.595942+00:00",
+  "inputs": {
+    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5fd806856a6644ab97e31257e5566164/inputs/guide.wav",
+    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5fd806856a6644ab97e31257e5566164/inputs/adr.wav",
+    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5fd806856a6644ab97e31257e5566164"
+  },
+  "durations_sec": {
+    "guide": 10.774333333333333,
+    "adr": 12.035625
+  },
+  "configs": {
+    "features": {
+      "n_mfcc": 20,
+      "n_mels": 40,
+      "fmin": 50.0,
+      "fmax": null,
+      "frame_ms": 25.0,
+      "hop_ms": 10.0,
+      "include_deltas": true,
+      "include_delta2": true,
+      "cmvn": true,
+      "preemph": 0.97,
+      "power": 2.0,
+      "eps": 1e-10,
+      "delta_N": 2
+    },
+    "dtw": {
+      "band_frac": 0.15,
+      "step_penalty": 0.005,
+      "slope_min": 0.0,
+      "slope_max": 1.8,
+      "anchor_every": 12,
+      "simplify_eps_s": 0.06,
+      "eps": 1e-08
+    },
+    "guardrails": {
+      "render_cost_max": 1.0,
+      "plateau_warn_s": 2.0,
+      "qc_on_render_skip": true,
+      "write_summary": true
+    },
+    "render": {
+      "fade_ms": 50.0
+    },
+    "qc": {
+      "cost_percentile": 95.0
+    }
+  },
+  "stats": {
+    "Ta": 1203.0,
+    "Tg": 1076.0,
+    "path_len": 1311.0,
+    "mean_cost": 0.2400352507829666,
+    "min_slope": 0.011904761904761911,
+    "max_slope": 24.25000000000049,
+    "num_clamps": 0.0,
+    "anchors_k": 15.0,
+    "band_frac": 0.15
+  },
+  "guardrail_metrics": {
+    "mean_cost": 0.2400352507829666,
+    "max_plateau_adr_s": 0.8400000000000003,
+    "plateau_warn_s": 2.0,
+    "plateau_warn_triggered": false
+  },
+  "actions": {
+    "render_requested": true,
+    "render_executed": true,
+    "render_skipped_reason": null,
+    "qc_requested": true,
+    "qc_forced": false,
+    "qc_executed": true,
+    "qc_segments_count": 1,
+    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5fd806856a6644ab97e31257e5566164/qc_segments.csv"
+  },
+  "artifacts": [
+    {
+      "name": "adr_conformed.wav",
+      "size_bytes": 1034380
+    },
+    {
+      "name": "anchors.csv",
+      "size_bytes": 313
+    },
+    {
+      "name": "path.csv",
+      "size_bytes": 35968
+    },
+    {
+      "name": "qc_segments.csv",
+      "size_bytes": 157
+    },
+    {
+      "name": "stats.csv",
+      "size_bytes": 188
+    }
+  ]
+}

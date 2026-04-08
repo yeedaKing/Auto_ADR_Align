@@ -1,0 +1,99 @@
+{
+  "created_at_utc": "2026-04-08T03:50:29.201646+00:00",
+  "inputs": {
+    "guide_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5b227f058c44499a9301570e608b241b/inputs/guide.wav",
+    "adr_path": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5b227f058c44499a9301570e608b241b/inputs/adr.wav",
+    "out_dir": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5b227f058c44499a9301570e608b241b"
+  },
+  "durations_sec": {
+    "guide": 10.6085625,
+    "adr": 12.035625
+  },
+  "configs": {
+    "features": {
+      "n_mfcc": 20,
+      "n_mels": 40,
+      "fmin": 50.0,
+      "fmax": null,
+      "frame_ms": 25.0,
+      "hop_ms": 10.0,
+      "include_deltas": true,
+      "include_delta2": true,
+      "cmvn": true,
+      "preemph": 0.97,
+      "power": 2.0,
+      "eps": 1e-10,
+      "delta_N": 2
+    },
+    "dtw": {
+      "band_frac": 0.15,
+      "step_penalty": 0.005,
+      "slope_min": 0.0,
+      "slope_max": 3.0,
+      "anchor_every": 5,
+      "simplify_eps_s": 0.06,
+      "eps": 1e-08
+    },
+    "guardrails": {
+      "render_cost_max": 1.0,
+      "plateau_warn_s": 2.0,
+      "qc_on_render_skip": true,
+      "write_summary": true
+    },
+    "render": {
+      "fade_ms": 35.0
+    },
+    "qc": {
+      "cost_percentile": 95.0
+    }
+  },
+  "stats": {
+    "Ta": 1203.0,
+    "Tg": 1060.0,
+    "path_len": 1300.0,
+    "mean_cost": 0.23340989649295807,
+    "min_slope": 0.04705882352941153,
+    "max_slope": 21.75000000000049,
+    "num_clamps": 0.0,
+    "anchors_k": 14.0,
+    "band_frac": 0.15
+  },
+  "guardrail_metrics": {
+    "mean_cost": 0.23340989649295807,
+    "max_plateau_adr_s": 0.0,
+    "plateau_warn_s": 2.0,
+    "plateau_warn_triggered": false
+  },
+  "actions": {
+    "render_requested": true,
+    "render_executed": true,
+    "render_skipped_reason": null,
+    "qc_requested": true,
+    "qc_forced": false,
+    "qc_executed": true,
+    "qc_segments_count": 0,
+    "qc_csv": "/Users/dkyee/Desktop/CSCI/Auto_ADR_Align/runs_api/5b227f058c44499a9301570e608b241b/qc_segments.csv"
+  },
+  "artifacts": [
+    {
+      "name": "adr_conformed.wav",
+      "size_bytes": 1018466
+    },
+    {
+      "name": "anchors.csv",
+      "size_bytes": 293
+    },
+    {
+      "name": "path.csv",
+      "size_bytes": 35610
+    },
+    {
+      "name": "qc_segments.csv",
+      "size_bytes": 92
+    },
+    {
+      "name": "stats.csv",
+      "size_bytes": 188
+    }
+  ]
+}
