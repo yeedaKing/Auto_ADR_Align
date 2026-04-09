@@ -16,6 +16,11 @@ This project focuses on practical alignment accuracy for speech, with guardrails
 
 Example output:
 - `adr_conformed.wav` (aligned to guide timing)
+- `anchors.csv` (time map anchors)
+- `path.csv` (DTW path for debugging)
+- `qc_segments.csv` (QC for suspicious regions)
+- `run_summary.json` (comprehensive JSON summary)
+- `stats.csv` (key/value stats)
 
 ## Features
 
@@ -47,9 +52,9 @@ http://localhost:8000/ui
   - `dtw_map.py` – DTW alignment + anchor generation
   - `render.py` – audio conforming
   - `export.py` - CSV export
-  - `io_utils.py` - Audio I/O utilities
-  - `qc.py` - Quality control heuristics
-  - `segment.py` - Phrase segmentation
+  - `io_utils.py` - audio I/O utilities
+  - `qc.py` - quality control heuristics
+  - `segment.py` - phrase segmentation
 - `bin/adr_align.py` – main pipeline
 - `web/` – frontend UI
 
